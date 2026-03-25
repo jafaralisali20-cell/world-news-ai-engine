@@ -39,7 +39,7 @@ API_HASH         = os.environ.get("TG_API_HASH", "35b04ff5fb54744d4439f3d1c41e42
 SESSION_STRING   = os.environ.get("SESSION_STRING", "")
 
 ai_client        = anthropic.AsyncAnthropic(api_key=ANTHROPIC_KEY) if ANTHROPIC_KEY else None
-print(f"[AI BOOT] WorldNewsLi Engine Online - {BOT_START_TIME.isoformat()}")
+print(f"[AI BOOT] WorldNewsLi Engine Online — {BOT_START_TIME.isoformat()}")
 
 # ================================================================
 # NEWS HISTORY (SitRep Analysis Buffer)
@@ -68,20 +68,20 @@ async def mark_processed(h: str):
         if len(_seen) > 8000: _seen.clear()
 
 # ================================================================
-# CLAUDE AI PIPELINE - Chief Satellite Military Editor
+# CLAUDE AI PIPELINE — Chief Satellite Military Editor
 # ================================================================
 SYSTEM_PROMPT = """
-You are the Chief Satellite Military Editor of WorldNewsLi, with a SPECIAL STRATEGIC FOCUS on IRAQ (\u0627\u0644\u0639\u0631\u0627\u0642).
+You are the Chief Satellite Military Editor of WorldNewsLi, with a SPECIAL STRATEGIC FOCUS on IRAQ (العراق).
 Your ONLY job is to take ANY incoming Arabic/English news (even if informal, messy, or conversational) and strictly rephrase it into a highly formal, official broadcast news report. DO NOT ADD ANY EXTRA INFORMATION.
 
 STRICT RULES:
-1. \ud83d\udd39 Start with a highly official, serious Arabic headline (max 12 words, bold).
-2. \u25aa\ufe0f Follow with 1-3 tight factual bullet points using strictly formal news language (\u0644\u063a\u0629 \u0625\u062e\u0628\u0627\u0631\u064a\u0629 \u0631\u0633\u0645\u064a\u0629 \u0631\u0635\u064a\u0646\u0629).
+1. 🔹 Start with a highly official, serious Arabic headline (max 12 words, bold).
+2. ▪️ Follow with 1-3 tight factual bullet points using strictly formal news language (لغة إخبارية رسمية رصينة).
 3. Remove ALL personal opinions, informal words, hashtags, URLs, t.me links, reporter names, and source signatures.
-4. Replace all source mentions with "\u0645\u064e\u0635\u0627\u062f\u0650\u0631\u064f\u0646\u0627".
-5. Add footer: \ud83d\udce1 \u0645\u064e\u0635\u0627\u062f\u0650\u0631\u064f\u0646\u0627 | [SAT_INFO].
-6. NEVER return an empty result unless the text is pure spam/ad - then return: EMPTY
-7. Language: High-level formal Arabic ONLY (\u0641\u0635\u062d\u0649 \u0631\u0633\u0645\u064a\u0629).
+4. Replace all source mentions with "مَصادِرُنا".
+5. Add footer: 📡 مَصادِرُنا | [SAT_INFO].
+6. NEVER return an empty result unless the text is pure spam/ad — then return: EMPTY
+7. Language: High-level formal Arabic ONLY (فصحى رسمية).
 8. STRICT REPHRASING: You must completely transform unofficial text into an official statement.
 """
 
@@ -90,7 +90,7 @@ async def execute_ai_pipeline(
     ocr_text: str = "",
     source_name: str = "",
 ) -> str:
-    sat_info = SAT_DATA.get(source_name, "\u062a\u063a\u0637\u064a\u0629 \u0645\u0633\u062a\u0645\u0631\u0629")
+    sat_info = SAT_DATA.get(source_name, "تغطية مستمرة")
     combined = (
         f"SOURCE: {source_name}\n"
         f"SAT: {sat_info}\n"
@@ -100,7 +100,7 @@ async def execute_ai_pipeline(
 
     if not ai_client:
         clean = re.sub(r'https?://\S+|@\w+|#\w+|<[^>]+>', '', raw_text).strip()
-        return f"\ud83d\udd39 {clean[:120]}\n\n\u25aa\ufe0f \u062a\u0641\u0627\u0635\u064a\u0644 \u0625\u0636\u0627\u0641\u064a\u0629\n\ud83d\udce1 \u0645\u064e\u0635\u0627\u062f\u0650\u0631\u064f\u0646\u0627 | {sat_info}" if len(clean) > 30 else ""
+        return f"🔹 {clean[:120]}\n\n▪️ تفاصيل إضافية\n📡 مَصادِرُنا | {sat_info}" if len(clean) > 30 else ""
 
     try:
         msg = await ai_client.messages.create(
@@ -123,12 +123,12 @@ You are the Strategic Intelligence Analyst for WorldNewsLi.
 Based on the recent news digest, produce a concise Strategic Situation Report (SitRep).
 
 FORMAT:
-\ud83d\udea9 [\u062a\u062d\u0644\u064a\u0644 \u0627\u0633\u062a\u0631\u0627\u062a\u064a\u062c\u064a] (date + time context)
-- \ud83d\udcc8 \u0627\u0644\u062a\u0648\u062c\u0647 \u0627\u0644\u0639\u0627\u0645: ...
-- \ud83d\udea8 \u0645\u0633\u062a\u0648\u0649 \u0627\u0644\u062a\u0647\u062f\u064a\u062f: \u0639\u0627\u0644\u064d / \u0645\u062a\u0648\u0633\u0637 / \u0645\u0646\u062e\u0641\u0636
-- \ud83c\udfaf \u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u062a\u0631\u0643\u064a\u0632: ...
-- \u26a1 \u0627\u0644\u062a\u0637\u0648\u0631\u0627\u062a \u0627\u0644\u0645\u064a\u062f\u0627\u0646\u064a\u0629: ...
-- \ud83d\udce1 \u062d\u0627\u0644\u0629 \u0627\u0644\u0631\u0635\u062f: \u0645\u064f\u0641\u0639\u0651\u0644 | \u062c\u0645\u064a\u0639 \u0627\u0644\u0642\u0646\u0648\u0627\u062a
+🚩 [تحليل استراتيجي] (date + time context)
+- 📈 التوجه العام: ...
+- 🚨 مستوى التهديد: عالٍ / متوسط / منخفض
+- 🎯 منطقة التركيز: ...
+- ⚡ التطورات الميدانية: ...
+- 📡 حالة الرصد: مُفعّل | جميع القنوات
 
 RULES: Be concise. Arabic only. Strategic NOT tactical gossip.
 """
@@ -165,8 +165,8 @@ async def publish_to_telegram(http: aiohttp.ClientSession, text: str) -> bool:
     keyboard = {
         "inline_keyboard": [
             [
-                {"text": "\u2705 \u062a\u0640\u0640\u0627\u0628\u0640\u0640\u0639\u0640\u0640\u0646\u0640\u0627", "url": "https://t.me/WorldNewsLi"},
-                {"text": "\ud83d\udce3 \u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0646\u0627", "url": "https://t.me/WorldNewsLi?direct"}
+                {"text": "🟢 تــابــعــنـا", "url": "https://t.me/WorldNewsLi"},
+                {"text": "🔴 تواصل معنا", "url": "https://t.me/WorldNewsLi?direct"}
             ]
         ]
     }
@@ -184,7 +184,7 @@ async def publish_to_telegram(http: aiohttp.ClientSession, text: str) -> bool:
     except: return False
 
 # ================================================================
-# OCR - Image-to-Text
+# OCR — Image-to-Text
 # ================================================================
 async def extract_ocr(client: TelegramClient, msg) -> str:
     if msg.photo:
@@ -219,7 +219,7 @@ async def handle_telegram_event(
     if await is_processed(h): return
     await mark_processed(h)
 
-    src = msg.chat.title if hasattr(msg.chat, "title") else "\u0645\u064e\u0635\u0627\u062f\u0650\u0631\u064f\u0646\u0627"
+    src = msg.chat.title if hasattr(msg.chat, "title") else "مَصادِرُنا"
 
     # AI
     post = await execute_ai_pipeline(raw, ocr, src)
@@ -294,18 +294,18 @@ async def health(_):
 # MAIN ENTRYPOINT
 # ================================================================
 async def main():
-      # Telegram connection
-      client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
-      await client.connect()
-      if not await client.is_user_authorized():
-                print("[FATAL] Telegram session invalid. Set SESSION_STRING variable.")
-                return
+    # Telegram connection
+    client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
+    await client.connect()
+    if not await client.is_user_authorized():
+        print("[FATAL] Telegram session invalid. Set SESSION_STRING variable.")
+        return
 
-      http = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=200))
+    http = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=200))
 
     # Resolve channels via dynamic universal filtering (fixes muted/unopened channel issues)
-      print("[INIT] Optimizing target channel cache for muted/live channels...")
-      target_usernames = {ch.lower() for ch in TG_CHANNELS}
+    print("[INIT] Optimizing target channel cache for muted/live channels...")
+    target_usernames = {ch.lower() for ch in TG_CHANNELS}
 
         @client.on(events.NewMessage())
         async def on_event(event):
@@ -329,5 +329,4 @@ async def main():
     )
 
 if __name__ == "__main__":
-      asyncio.run(main())
-  
+    asyncio.run(main())
