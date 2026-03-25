@@ -1,4 +1,4 @@
-"""
+f"""
 WorldNewsLi - AI ENGINE (Claude 3.5 + n8n + ZERO LATENCY)
 The ultimate 24/7 autonomous news agency.
 Features: 
@@ -155,7 +155,7 @@ async def publish_telegram(http: aiohttp.ClientSession, text: str):
       if not text or "EMPTY" in text: return False
             url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     async with http.post(url, json={
-              "chat_id": TARGET_CHANNEL, "text": text, "parse_mode": "HTML"
+              "chat_id": TARGET_CHANNEL, "text": text, "parse_mode": "HTML", "disable_web_page_preview": True
     }, timeout=10) as r:
               resp = await r.json()
         return resp.get("ok", False)
