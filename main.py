@@ -307,26 +307,26 @@ async def main():
     print("[INIT] Optimizing target channel cache for muted/live channels...")
     target_usernames = {ch.lower() for ch in TG_CHANNELS}
 
-        @client.on(events.NewMessage())
-        async def on_event(event):
-                  chat = await event.get_chat()
-                  username = getattr(chat, 'username', '')
-                  if username and username.lower() in target_usernames:
-                                await handle_telegram_event(event, client, http)
-
-      # Health server
-          app = web.Application()
+    @client.on(events.NewMessage())
+    async def on_event(event):
+              chat = await event.get_chat()
+              username = getattr(chat, 'username', '')
+              if username and username.lower() in target_usernames:
+                            await handle_telegram_event(event, client, http)
+    
+    # Health server
+      app = web.Application()
     app.router.add_get("/", health)
     runner = web.AppRunner(app)
-        await runner.setup()
+    await runner.setup()
     await web.TCPSite(runner, "0.0.0.0", int(os.environ.get("PORT", 8080))).start()
-
+    
     print("[PIPELINE] CLAUDE 3.5 + n8n + NILESAT ENGINE FULLY ONLINE")
     await asyncio.gather(
-          client.run_until_disconnected(),
-          rss_loop(http),
-          sitrep_loop(http),
-)
+      client.run_until_disconnected(),
+      rss_loop(http),
+      sitrep_loop(http),
+    )
 
 if __name__ == "__main__":
     asyncio.run(main())
