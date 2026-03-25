@@ -314,19 +314,19 @@ async def main():
                   if username and username.lower() in target_usernames:
                                 await handle_telegram_event(event, client, http)
 
-          # Health server
-              app = web.Application()
-        app.router.add_get("/", health)
-        runner = web.AppRunner(app)
-            await runner.setup()
-        await web.TCPSite(runner, "0.0.0.0", int(os.environ.get("PORT", 8080))).start()
+      # Health server
+          app = web.Application()
+    app.router.add_get("/", health)
+    runner = web.AppRunner(app)
+        await runner.setup()
+    await web.TCPSite(runner, "0.0.0.0", int(os.environ.get("PORT", 8080))).start()
 
-        print("[PIPELINE] CLAUDE 3.5 + n8n + NILESAT ENGINE FULLY ONLINE")
-        await asyncio.gather(
-              client.run_until_disconnected(),
-              rss_loop(http),
-              sitrep_loop(http),
-    )
+    print("[PIPELINE] CLAUDE 3.5 + n8n + NILESAT ENGINE FULLY ONLINE")
+    await asyncio.gather(
+          client.run_until_disconnected(),
+          rss_loop(http),
+          sitrep_loop(http),
+)
 
 if __name__ == "__main__":
     asyncio.run(main())
